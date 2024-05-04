@@ -1,0 +1,16 @@
+.quickView {
+  border: 1px solid grey;
+  background-color: transparent;
+  text-align: center;
+  padding: 1%;
+  /* color: red; */
+  /* width: 50%; */
+  
+  display: none;
+}
+.quickView:hover {
+  border: 1px solid black;
+}
+.container:hover .quickView {
+  display: block;
+}
