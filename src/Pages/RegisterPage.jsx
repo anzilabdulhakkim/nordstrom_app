@@ -1,14 +1,7 @@
-import {
-  Box,
-  Center,
-  ChakraProvider,
-  extendTheme,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Center, ChakraProvider, extendTheme, Text} from "@chakra-ui/react";
 import { RiArrowUpSLine } from "react-icons/ri";
 import ScrollToTop from "react-scroll-to-top";
 import Footer from "../Components/Footer/Footer";
-// import { Login } from "../Components/Login/Login";
 import { Register } from "../Components/Login/Register";
 import Header from "../Components/Navbar/Header";
 import Navbar from "../Components/Navbar/Navbar";

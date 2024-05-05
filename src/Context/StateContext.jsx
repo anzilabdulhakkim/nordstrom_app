@@ -5,9 +5,7 @@ import { getData } from "../Redux/action";
 
 export const StateContext = createContext();
 
-// for handle page url
 
-// for get updated urls which we are select by sort or filter
 const getUrl = (currUrl, orderby, sortbyType, genderName, brandName) => {
   if (orderby && sortbyType && genderName && brandName) {
     return `${currUrl}&_sort=${sortbyType}&_order=${orderby}&gender=${genderName}&brand=${brandName}`;

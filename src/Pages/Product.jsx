@@ -31,8 +31,6 @@ export const Product = () => {
   } = useContext(StateContext);
 
   products.map((ele) => (ele.count = 1));
-  // console.log(products);
-  // function for sorting
   const handleChange = (e) => {
     const { value, name } = e.target;
     console.log(name, " ", value);
@@ -214,12 +212,13 @@ export const Product = () => {
           </Box>
         ))}
       </SimpleGrid>
-      <Box textAlign="center">
-        <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+      <Box textAlign="center" m="50px 0px">
+        <Button disabled={page === 1} mr="10px" onClick={() => setPage(page - 1)}>
           Prev
         </Button>
         <Button>{page}</Button>
         <Button
+        ml="10px"
           disabled={page === Math.ceil(length / 20)}
           onClick={() => setPage(page + 1)}
           _hover={{ color: "blue" }}

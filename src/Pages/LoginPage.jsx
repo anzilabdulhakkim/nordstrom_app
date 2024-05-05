@@ -2,7 +2,7 @@ import { Box, Center, ChakraProvider, extendTheme, Text } from "@chakra-ui/react
 import { RiArrowUpSLine } from "react-icons/ri";
 import ScrollToTop from "react-scroll-to-top";
 import Footer from "../Components/Footer/Footer";
-import { Login } from "../Components/Login/Login";
+import  Login  from "../Components/Login/Login";
 import Header from "../Components/Navbar/Header";
 import Navbar from "../Components/Navbar/Navbar";
 
@@ -18,9 +18,7 @@ function LoginPage() {
   return (
     <>
       <ChakraProvider theme={theme}>
-              <ScrollToTop
-                  smooth={"true"}
-                  viewBox={"0 0 30 30"}
+              <ScrollToTop smooth={"true"} viewBox={"0 0 30 30"}
                   component={
                       <Box>
                           <Center>

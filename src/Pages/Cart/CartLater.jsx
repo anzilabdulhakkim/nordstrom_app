@@ -54,7 +54,7 @@ export const CartLater = () => {
             borderRadius={"none"}
             _hover={{ border: "none", bg: "#e3e3e3" }}
           >
-            <Link>Continue Shopping</Link>
+            <Link to="/">Continue Shopping</Link>
           </Button>
           <Box>
             <Text m="2% 0">Accepted Payment Methods</Text>

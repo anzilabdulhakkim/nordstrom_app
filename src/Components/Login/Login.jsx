@@ -1,143 +1,97 @@
-import React from "react";
-import { Button, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton,} from "@mui/material";
-import { OutlinedInput } from "@mui/material";
-import { InputLabel } from "@mui/material";
-import { InputAdornment } from "@mui/material";
-import { FormControl } from "@mui/material";
-import { Visibility } from "@mui/icons-material";
-import { VisibilityOff } from "@mui/icons-material";
-import "./Login.css";
-import { Link, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Center,  Box, } from "@chakra-ui/react";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import DialogContent from "@mui/material/DialogContent";
-import { loginLoading, loginError, loginSuccess, loginUserLoading, loginUserSuccess, loginUserError,} from "../../Features/Login/actions";
-import { useEffect, useState } from "react";
+import { loginLoading, loginError, loginSuccess, loginUserLoading, loginUserSuccess, loginUserError } from "../../Features/Login/actions";
 import { registerSuccess } from "../../Features/Register/actions";
-import { useContext } from "react";
-import { SignUpContext } from "../../Context/SignupContext";
+import { useNavigate,Link } from "react-router-dom";
 
-const intial = {
+const initialState = {
   email: "",
   password: "",
 };
 
-
-export const Login = () => {
-  const [form, setForm] = useState(intial);
+const Login = () => {
+  const [form, setForm] = useState(initialState);
   const [user, setUser] = useState([]);
+  const [logStatus, setLogStatus] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
+  const Navigate = useNavigate();
 
-  const [logStatus, setStatus] = useState(false);
-
-  const { register } = useSelector((state) => ({
-    register: state.registerState.register,
-  }));
-
-  const { users, userData } = useSelector((state) => ({
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => ({
     users: state.loginState.users,
-    userData: state.loginState.userData,
   }));
 
   useEffect(() => {
     getUsers();
   }, []);
 
-  const dispatch = useDispatch();
-
-  function findUser() {
-    let userDet = users.filter((el) => el.email === form.email);
-    console.log(userDet);
-    localStorage.setItem("userData", JSON.stringify(userDet));
-    setUser(userDet);
-  }
-
-  function getUsers() {
+  const getUsers = () => {
     dispatch(loginLoading());
-    fetch("https://nordstrom-ojra.onrender.com/user")
-      .then((d) => d.json())
-      .then((res) => {
-        dispatch(loginSuccess(res));
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user`)
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(loginSuccess(data));
       })
-      .catch((err) => {
+      .catch((error) => {
+        console.log("Error:", error);
         dispatch(loginError());
       });
-  }
+  };
 
-  function postLoginData() {
+  const postLoginData = () => {
     dispatch(loginUserLoading());
-    fetch("https://nordstrom-ojra.onrender.com/userData", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
       method: "POST",
       body: JSON.stringify({
         email: form.email,
         password: form.password,
-        otp: Math.floor(1000 + Math.random() * 9000),
-        first_name: user[0].first_name,
       }),
       headers: {
         "Content-Type": "application/json",
       },
     })
-      .then((d) => d.json())
-      .then((res) => {
-        dispatch(loginUserSuccess(res));
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(loginUserSuccess(data));
+        setLogStatus(true);
       })
-      .catch((err) => {
+      .catch((error) => {
+        console.log(error)
         dispatch(loginUserError());
       });
-  }
-
-  const handleSubmit = () => {
-  
   };
-  const [open, setOpen] = React.useState(false);
-  const { handleMiddle } = useContext(SignUpContext);
+
   const handleClickOpen = () => {
-    if (user.length === 0) {
-      setOpen(true);
-    } else if (user[0].password != form.password) {
-      setOpen(true);
-    } else {
+    const foundUser = users.find((user) => user.email === form.email);
+    if (!foundUser || foundUser.password !== form.password) {
+      setIsOpen(true);
+    } 
+    else {
       postLoginData();
-      handleMiddle();
-      setStatus(true);
     }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleRegister = () => {
     dispatch(registerSuccess(false));
   };
 
-  const handleEmailChange = ({ target: { name, value } }) => {
-    setForm({
-      ...form,
-      [name]: value,
-    });
-    findUser();
+  const handleEmailChange = (event) => {
+    const { name, value } = event.target;
+    setForm({ ...form, [name]: value });
+    setUser(users.filter((user) => user.email === value));
   };
 
-  const [values, setValues] = React.useState({
-    password: "",
-    showPassword: false,
-  });
-
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-    setForm({ ...form, [prop]: event.target.value });
-    findUser();
+  const handlePasswordChange = (event) => {
+    const { name, value } = event.target;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleClickShowPassword = () => {
-    setValues({
-      ...values,
-      showPassword: !values.showPassword,
-    });
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   if (logStatus) {
@@ -147,106 +101,84 @@ export const Login = () => {
   }
 
   return (
-    <div>
-      <div className="formLog">
-        <div className="staticTextOne">Welcome back!</div>
-        <div className="staticTextTwo">Sign in with the same info</div>
+    <Center minH="60vh" mb="50px">
+      <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="md">
+        <div className="formLog">
+          <div className="staticTextOne">Welcome back!</div>
+          <br />
+          <div className="staticTextTwo">Sign in with the same info</div>
 
-        <FormControl
-          size="medium"
-          sx={{ m: "auto", mt: "20px", mb: "10px", width: "350px" }}
-          variant="outlined"
-        >
-          <InputLabel
-            htmlFor="outlined-adornment-password"
-            sx={{ fontSize: "12px" }}
-          >
-            Email
-          </InputLabel>
-          <OutlinedInput
-            label="Email"
-            sx={{ fontSize: "12px" }}
-            name="email"
-            onChange={handleEmailChange}
-          />
-        </FormControl>
+          <FormControl size="md" sx={{ m: "auto", mt: "20px", mb: "10px", width: "350px" }}>
+            <FormLabel fontSize="12px">Email</FormLabel>
+            <Input fontSize="12px" name="email" onChange={handleEmailChange} />
+          </FormControl>
 
-        <FormControl
-          size="medium"
-          sx={{ m: "auto", mt: "10px", mb: "10px", width: "350px" }}
-          variant="outlined"
-        >
-          <InputLabel
-            htmlFor="outlined-adornment-password"
-            sx={{ fontSize: "12px" }}
-          >
-            Password
-          </InputLabel>
-          <OutlinedInput
-            sx={{ fontSize: "12px" }}
-            id="outlined-adornment-password"
-            type={values.showPassword ? "text" : "password"}
-            value={values.password}
-            onChange={handleChange("password")}
-            endAdornment={
-              <InputAdornment position="end">
+          <FormControl size="md" sx={{ m: "auto", mt: "10px", mb: "10px", width: "350px" }}>
+            <FormLabel fontSize="12px">Password</FormLabel>
+            <InputGroup>
+              <Input
+                fontSize="12px"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                onChange={handlePasswordChange}
+              />
+              <InputRightElement>
                 <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                  size="small"
-                >
-                  {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
-          />
-        </FormControl>
-        <div className="staticTextThree">Forgot password?</div>
-        <div className="staticTextFour">
-          <input className="checkBox" type="checkbox" />
-          <label> Keep me signed in.</label>
-        </div>
+                  aria-label="Toggle password visibility"
+                  size="sm"
+                  onClick={handleShowPassword}
+                  variant="ghost"
+                  colorScheme="blue"
+                  icon={showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                />
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+          <div className="staticTextThree">Forgot password?</div>
+          <br />
+          <div className="staticTextFour">
+            <input className="checkBox" type="checkbox" />
+            <label> Keep me signed in.</label>
+          </div>
+            <br />
+          <Button onClick={handleClickOpen} className="signInButton" variant="solid" size="md" backgroundColor="black"  margin="0% 35%" color="white" mt="4">Sign in</Button>
 
-        <button onClick={handleClickOpen} className="signInButton">
-          Sign in
-        </button>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle width={"500px"} id="alert-dialog-title">
-            {"Alert"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {form.email === "" || form.password === ""
-                ? "Please enter the Email and Password"
-                : user.length === 0
-                ? "Invalid email id"
-                : user[0].password != form.password
-                ? "Invalid Password"
-                : ""}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} backgroundColor="red" autoFocus>
-              Try again
-            </Button>
-          </DialogActions>
-        </Dialog>
 
-        <div className="staticTextTwo">
-          Dont have an account?
-          <Link to={"/register"} onClick={handleRegister}>
-            Register
-          </Link>
+          <AlertDialog isOpen={isOpen} leastDestructiveRef={undefined} onClose={onClose}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Alert
+                </AlertDialogHeader>
+
+                <AlertDialogBody>
+                  {form.email === "" || form.password === ""
+                    ? "Please enter the Email and Password"
+                    : user.length === 0
+                    ? "Invalid email id"
+                    : "Invalid Password"}
+                </AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button colorScheme="red" onClick={onClose}>
+                    Try again
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+            
+          <br /> <br />
+          <div className="staticTextTwo">
+            Dont have an account ? 
+            <Link to={"/register"} onClick={handleRegister}>
+              Register
+            </Link>
+          </div>
         </div>
-      </div>
-    </div>
+      </Box>
+    </Center>
   );
 };
+
+export default Login;

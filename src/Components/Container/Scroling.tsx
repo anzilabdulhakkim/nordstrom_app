@@ -25,8 +25,6 @@ function Scrolling() {
     }, speed);
   };
 
-  console.log(NewArivelDataArray);
-
   return (
     <Styled.Container>
       <Heading fontSize="25px" color="#393939">

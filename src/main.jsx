@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { StateContextProvider } from "./Context/StateContext";
 import store from "./store";
 import { SignUpContextProvide } from "./Context/SignupContext";
+import { ProSidebarProvider } from "react-pro-sidebar";
 import 'swiper/swiper-bundle.css';
 
 
@@ -13,9 +14,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <SignUpContextProvide>
       <BrowserRouter>
+      <ProSidebarProvider>
           <StateContextProvider>
             <App />
           </StateContextProvider>
+      </ProSidebarProvider>
       </BrowserRouter>
     </SignUpContextProvide>
   </Provider>
