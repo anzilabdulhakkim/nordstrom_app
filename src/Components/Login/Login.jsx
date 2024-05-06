@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Center,  Box, } from "@chakra-ui/react";
+import { useState } from "react";
+import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Center, Box } from "@chakra-ui/react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { loginLoading, loginError, loginSuccess, loginUserLoading, loginUserSuccess, loginUserError } from "../../Features/Login/actions";
-import { registerSuccess } from "../../Features/Register/actions";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Loader from "../Loader";
 
 const initialState = {
   email: "",
@@ -13,104 +11,62 @@ const initialState = {
 
 const Login = () => {
   const [form, setForm] = useState(initialState);
-  const [user, setUser] = useState([]);
-  const [logStatus, setLogStatus] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const onClose = () => setIsOpen(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const Navigate = useNavigate();
 
-  const dispatch = useDispatch();
-  const { users } = useSelector((state) => ({
-    users: state.loginState.users,
-  }));
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  const getUsers = () => {
-    dispatch(loginLoading());
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user`)
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(loginSuccess(data));
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-        dispatch(loginError());
-      });
-  };
-
-  const postLoginData = () => {
-    dispatch(loginUserLoading());
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
-      method: "POST",
-      body: JSON.stringify({
-        email: form.email,
-        password: form.password,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        dispatch(loginUserSuccess(data));
-        setLogStatus(true);
-      })
-      .catch((error) => {
-        console.log(error)
-        dispatch(loginUserError());
-      });
-  };
-
-  const handleClickOpen = () => {
-    const foundUser = users.find((user) => user.email === form.email);
-    if (!foundUser || foundUser.password !== form.password) {
-      setIsOpen(true);
-    } 
-    else {
-      postLoginData();
-    }
-  };
-
-  const handleRegister = () => {
-    dispatch(registerSuccess(false));
-  };
-
-  const handleEmailChange = (event) => {
-    const { name, value } = event.target;
-    setForm({ ...form, [name]: value });
-    setUser(users.filter((user) => user.email === value));
-  };
-
-  const handlePasswordChange = (event) => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setForm({ ...form, [name]: value });
   };
 
+  const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  if (logStatus) {
-    localStorage.setItem("userData", JSON.stringify(user[0]));
-    localStorage.setItem("logedin", true);
-    return <Navigate to={"/"} />;
-  }
+  const handleClickOpen = () => {
+    setIsLoading(true);
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
+      method: "POST",
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Invalid email or password");
+        }
+      })
+      .then((data) => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("loggedIn", true);
+        Navigate("/ProductPage");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setErrorMessage(error.message);
+        setIsOpen(true);
+      });
+  };
 
   return (
     <Center minH="60vh" mb="50px">
       <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="md">
+        {isLoading && <Loader />}
         <div className="formLog">
           <div className="staticTextOne">Welcome back!</div>
           <br />
-          <div className="staticTextTwo">Sign in with the same info</div>
+          <div className="staticTextTwo">Sign in with the same information</div>
 
           <FormControl size="md" sx={{ m: "auto", mt: "20px", mb: "10px", width: "350px" }}>
             <FormLabel fontSize="12px">Email</FormLabel>
-            <Input fontSize="12px" name="email" onChange={handleEmailChange} />
+            <Input fontSize="12px" name="email" value={form.email} onChange={handleInputChange} />
           </FormControl>
 
           <FormControl size="md" sx={{ m: "auto", mt: "10px", mb: "10px", width: "350px" }}>
@@ -120,7 +76,8 @@ const Login = () => {
                 fontSize="12px"
                 type={showPassword ? "text" : "password"}
                 name="password"
-                onChange={handlePasswordChange}
+                value={form.password}
+                onChange={handleInputChange}
               />
               <InputRightElement>
                 <IconButton
@@ -134,17 +91,10 @@ const Login = () => {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <div className="staticTextThree">Forgot password?</div>
-          <br />
-          <div className="staticTextFour">
-            <input className="checkBox" type="checkbox" />
-            <label> Keep me signed in.</label>
-          </div>
-            <br />
-          <Button onClick={handleClickOpen} className="signInButton" variant="solid" size="md" backgroundColor="black"  margin="0% 35%" color="white" mt="4">Sign in</Button>
 
-
-          <AlertDialog isOpen={isOpen} leastDestructiveRef={undefined} onClose={onClose}>
+          <Button onClick={handleClickOpen} className="signInButton" variant="solid" size="md" backgroundColor="black" margin="0% 35%" color="white" mt="4" disabled={isLoading}>Sign in</Button> {/* Disable button while loading */}
+          
+          <AlertDialog isOpen={isOpen} leastDestructiveRef={undefined} onClose={() => setIsOpen(false)}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -152,26 +102,22 @@ const Login = () => {
                 </AlertDialogHeader>
 
                 <AlertDialogBody>
-                  {form.email === "" || form.password === ""
-                    ? "Please enter the Email and Password"
-                    : user.length === 0
-                    ? "Invalid email id"
-                    : "Invalid Password"}
+                  {errorMessage}
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button colorScheme="red" onClick={onClose}>
+                  <Button colorScheme="red" onClick={() => setIsOpen(false)}>
                     Try again
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialogOverlay>
           </AlertDialog>
-            
+
           <br /> <br />
           <div className="staticTextTwo">
-            Dont have an account ? 
-            <Link to={"/register"} onClick={handleRegister}>
+            Do not have an account?
+            <Link to={"/register"}>
               Register
             </Link>
           </div>

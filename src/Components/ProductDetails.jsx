@@ -8,16 +8,7 @@ import { ImGift } from "react-icons/im";
 import { SiGooglemessages } from "react-icons/si";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure,} from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import Footer from "./Footer/Footer";
@@ -29,18 +20,14 @@ export default function ProductDetails() {
   const [users, setUsers] = useState([{}]);
   const [imgs, setImgs] = useState([]);
   const id = useParams();
-  console.log(id.id);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const getUsers = async () => {
-    let response = await fetch(
-      `https://nordstrom-ojra.onrender.com/products/${id.id}`
-    );
+    let response = await fetch(`https://nordstrom-ojra.onrender.com/products/${id.id}`);
     let data = await response.json();
     data.count = 1;
     setUsers(data);
-    console.log(data);
     setImgs(data.images);
   };
 
@@ -51,7 +38,6 @@ export default function ProductDetails() {
   let storageLocal = JSON.parse(localStorage.getItem("CartData")) || [];
 
   const callLocal = (display) => {
-    console.log("onlclik", display);
     storageLocal.push(display);
     localStorage.setItem("CartData", JSON.stringify(storageLocal));
     onClose();
@@ -83,11 +69,6 @@ export default function ProductDetails() {
                 pagination={{ clickable: true }}
                 autoplay={{ delay: 3000 }}
               >
-                {imgs.map((elem) => (
-                  <SwiperSlide key={elem}>
-                    <Image className="imgTag" src={elem.src} />
-                  </SwiperSlide>
-                ))}
               </Swiper>
             </Box>
             <Box className="frontImage">
@@ -169,9 +150,9 @@ export default function ProductDetails() {
                     <HStack>
                       <Box mr={5} width="65%">
                         <Swiper>
-                          {imgs.map((elem) => (
-                            <SwiperSlide key={elem}>
-                              <Image src={elem.src} width="100%" />
+                          {imgs.map((elem, index) => (
+                            <SwiperSlide key={index}>
+                              <Image src={elem.src} />
                             </SwiperSlide>
                           ))}
                         </Swiper>

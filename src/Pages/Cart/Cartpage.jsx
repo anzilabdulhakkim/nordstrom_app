@@ -10,57 +10,47 @@ import Footer from "../../Components/Footer/Footer";
 
 export const Cartpage = () => {
   const { bagLength, laterBagLen } = useContext(StateContext);
-  const ref = useRef("flex");
-  const ref2 = useRef("none");
-  const[bagstate,setBagState]=useState(true)
+  const [bagstate, setBagState] = useState(true);
+
   const handlBag = () => {
- 
-    setBagState(true)
+    setBagState(true);
   };
+
   const handleLater = () => {
-    
-    setBagState(false)
+    setBagState(false);
   };
 
   return (
     <ChakraProvider>
-       
-        <ScrollToTop
-          smooth={"true"}
-          viewBox={"0 0 30 30"}
-          component={
-            <Box>
-              <Center>
-                <RiArrowUpSLine size={"20px"} width={"400"} />
-              </Center>
-              <Text color={"#393939"} fontSize={"13px"}>
-                Top
-              </Text>
-            </Box>
-          }
-        />
-        <Navbar />
-         
-      <Box p="0% 5%">
-        <Tabs>
-          <TabList border="none">
-            
-            <Tab onClick={handlBag} border="1px solid black">Shoping Bag ({bagLength})</Tab>
-           
-
-      
-              {" "}
-            <Tab onClick={handleLater} border="1px solid black">Save for later ({laterBagLen})</Tab>
-           
-          </TabList>
-        </Tabs>
-        {
-          bagstate ? <CartBag /> : <CartLater />
-        }
-         
-        
-      </Box>
-      <Footer/>
+      <Center>
+        <Box w="100%">
+          <ScrollToTop
+            smooth={"true"}
+            viewBox={"0 0 30 30"}
+            component={
+              <Box>
+                <Center>
+                  <RiArrowUpSLine size={"20px"} width={"400"} />
+                </Center>
+                <Text color={"#393939"} fontSize={"13px"}>
+                  Top
+                </Text>
+              </Box>
+            }
+          />
+          <Navbar />
+          <Box p="0% 5%">
+            <Tabs>
+              <TabList border="none">
+                <Tab onClick={handlBag} border="1px solid black">Shopping Bag ({bagLength})</Tab>
+                <Tab onClick={handleLater} border="1px solid black">Save for later ({laterBagLen})</Tab>
+              </TabList>
+            </Tabs>
+            {bagstate ? <CartBag /> : <CartLater />}
+          </Box>
+          <Footer />
+        </Box>
+      </Center>
     </ChakraProvider>
   );
 };

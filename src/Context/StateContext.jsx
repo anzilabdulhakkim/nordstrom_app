@@ -190,27 +190,7 @@ export const StateContextProvider = ({ children }) => {
   };
 
   //  value for publicState -------------------------------------
-  const publicState = {
-    sortby,
-    setSortby,
-    sortbyType,
-    setSortbyType,
-    selectvalue,
-    setSelectValuue,
-    length,
-    setLength,
-    page,
-    setPage,
-    checkfilter,
-    setGenderName,
-    handleChange,
-    handleChangeBrand,
-    checkfilterBrand,
-    bagLength,
-    setBagLength,
-    laterBagLen,
-    setLaterBagLen,
-  };
+  const publicState = { sortby, setSortby, sortbyType, setSortbyType, selectvalue, setSelectValuue, length, setLength, page, setPage, checkfilter, setGenderName, handleChange, handleChangeBrand, checkfilterBrand, bagLength, setBagLength, laterBagLen, setLaterBagLen,};
 
   return (
     <StateContext.Provider value={publicState}>

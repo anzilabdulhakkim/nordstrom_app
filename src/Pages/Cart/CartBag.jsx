@@ -117,7 +117,7 @@ export const CartBag = () => {
   // for showing data when available--------------------------------------------------
   return (
     <ChakraProvider>
-      <Box>
+      <Box p="20px 80px">
         <Box>
           <Text fontSize={"2rem"} m="2% 0">
             Shopping Bag

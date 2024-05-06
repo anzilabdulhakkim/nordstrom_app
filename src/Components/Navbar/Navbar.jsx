@@ -1,10 +1,28 @@
-import { Box, Button, ChakraProvider, Flex, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList, Portal, Spacer, Stack, VStack,} from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  ChakraProvider,
+  Flex,
+  Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  VStack,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import InputBox from "./InputBox";
 import SignInButton from "./SignInButton";
 import NavbarTab from "./NavbarTab";
 
 export default function Navbar() {
+  const [user, setUser] = useState(null)
+
+  const handleSignOut = () => {
+    setUser(null);
+  };
+
   return (
     <ChakraProvider>
       <VStack
@@ -32,12 +50,36 @@ export default function Navbar() {
             </Link>
           </Box>
           <InputBox />
-          <SignInButton />
+          {user ? (
+            <Menu>
+              <MenuButton as={Button} variant="link" fontWeight="bold">
+                {user.name}
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <SignInButton />
+          )}
         </Flex>
-        <VStack width={"100%"} gap={"20px"}>
-          <Box width={"100%"} h={"0.4px"} backgroundColor={"gray.300"}></Box>
-          <NavbarTab />
-        </VStack>
+        {user && (
+          <VStack width={"100%"} gap={"20px"}>
+            <Box
+              width={"100%"}
+              h={"0.4px"}
+              backgroundColor={"gray.300"}
+            ></Box>
+            <Box>
+              <Link to="/products">
+                <Button variant="link" fontWeight="bold">
+                  Products
+                </Button>
+              </Link>
+            </Box>
+          </VStack>
+        )}
+        <NavbarTab />
       </VStack>
     </ChakraProvider>
   );

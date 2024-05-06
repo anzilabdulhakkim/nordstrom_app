@@ -1,8 +1,4 @@
-import {
-  REGISTER_ERROR,
-  REGISTER_LOADING,
-  REGISTER_SUCCESS,
-} from "./actionTypes";
+import { REGISTER_ERROR, REGISTER_LOADING, REGISTER_SUCCESS} from "./actionTypes";
 
 const init = { loading: false, register: false, error: false };
 export const reducer1 = (state = init, { type, payload }) => {

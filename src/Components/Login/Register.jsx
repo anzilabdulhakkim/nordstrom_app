@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
-import { Button, FormControl, FormLabel, Input,Text, InputGroup, InputRightElement, Center, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Box } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input, Text, InputGroup, InputRightElement, Center, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Box } from "@chakra-ui/react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import { useSelector, useDispatch } from "react-redux";
-import { registerError, registerLoading, registerSuccess } from "../../Features/Register/actions";
-import { useNavigate ,Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Loader from "../Loader";
 
-const initial = {
+const initialFormState = {
   email: "",
   password: "",
   first_name: "",
@@ -13,22 +12,11 @@ const initial = {
 };
 
 export const Register = () => {
-  const [form, setForm] = useState(initial);
-  const [emailError, setEmailError] = useState(true);
-  const [fNameError, setFNameError] = useState(true);
-  const [lNameError, setLNameError] = useState(true);
-  const [passwordError, setPasswordError] = useState(true);
+  const [form, setForm] = useState(initialFormState);
   const [openAlert, setOpenAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const ref = useRef(null);
-
-  const { loading, register, error } = useSelector((state) => ({
-    loading: state.registerState.loading,
-    register: state.registerState.register,
-    error: state.registerState.error,
-  }));
-
-  const dispatch = useDispatch();
-  const Navigate = useNavigate();
 
   const handleInputChange = ({ target: { name, value } }) => {
     setForm({
@@ -42,54 +30,40 @@ export const Register = () => {
   };
 
   const handleClickOpen = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user`);
-    const users = await res.json();
-    ref.current = users.findIndex((el) => el.email === form.email);
-
-    if (form.email === "" || form.password === "" || form.first_name === "" || form.last_name === "") {
-      setOpenAlert(true);
-    } else if (!form.email.match("[a-z0-9]+@[a-z]+.[a-z]{2,3}")) {
-      setEmailError(false);
-    } else if (form.first_name.length < 1) {
-      setFNameError(false);
-    } else if (form.last_name.length < 1) {
-      setLNameError(false);
-    } else if (form.password.length < 6) {
-      setPasswordError(false);
-    } else if (ref.current >= 0) {
-      setOpenAlert(true);
-    } else {
-      dispatch(registerLoading());
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/register`, {
+    setIsLoading(true); 
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/register`, {
         method: "POST",
         body: JSON.stringify(form),
         headers: {
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          dispatch(registerSuccess(true));
-        })
-        .catch((err) => {
-          dispatch(registerError());
-        });
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        navigate("/login");
+      } 
+      else {
+        setOpenAlert(true);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  if (register) {
-    return <Navigate to={"/login"} />;
-  }
-
   return (
     <Center minH="60vh" mb="50px">
       <Box bg="white" p="6" rounded="lg" shadow="md">
+        {isLoading && <Loader />}
         <div className="formReg">
           <div className="staticTextOne"><Text textAlign="center" fontWeight="bold">Create Account</Text></div>
 
@@ -133,9 +107,8 @@ export const Register = () => {
 
           <div className="staticTextTwo">By creating an account, you agree to our Privacy Policy and Terms & Conditions.</div>
 
-          <Button onClick={handleClickOpen} variant="solid" size="md" backgroundColor="black"  margin="5% 35%" color="white" mt="4">Create Account</Button>
-
-
+          <Button onClick={handleClickOpen} variant="solid" size="md" backgroundColor="black"  margin="5% 35%" color="white" mt="4" disabled={isLoading}>Create Account</Button> {/* Disable button while loading */}
+          
           <AlertDialog isOpen={openAlert} leastDestructiveRef={undefined} onClose={handleCloseAlert}>
             <AlertDialogOverlay>
               <AlertDialogContent>
@@ -144,7 +117,7 @@ export const Register = () => {
                 </AlertDialogHeader>
 
                 <AlertDialogBody>
-                  {ref.current >= 0 ? "Email Already Exist" : "Please fill in all details correctly"}
+                  {"Email Already Exist or Please fill in all details correctly"}
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
@@ -164,3 +137,4 @@ export const Register = () => {
     </Center>
   );
 };
+

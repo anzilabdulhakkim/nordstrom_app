@@ -1,8 +1,4 @@
-import {
-  REGISTER_ERROR,
-  REGISTER_LOADING,
-  REGISTER_SUCCESS,
-} from "./actionTypes";
+import { REGISTER_ERROR, REGISTER_LOADING, REGISTER_SUCCESS} from "./actionTypes";
 
 export const registerLoading = () => {
   return {

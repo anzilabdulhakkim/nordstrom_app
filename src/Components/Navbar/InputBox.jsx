@@ -1,5 +1,5 @@
 import { SearchIcon } from '@chakra-ui/icons';
-import { Box, ChakraProvider, extendTheme, Input, InputGroup, InputLeftElement, Stack } from '@chakra-ui/react';
+import { Box, ChakraProvider,Input, InputGroup, InputLeftElement, Stack } from '@chakra-ui/react';
  
 function InputBox() {
   return (
@@ -9,7 +9,7 @@ function InputBox() {
           <InputGroup>
             <InputLeftElement
               pointerEvents="none"
-              children={<SearchIcon color="gray.300" />}
+              children = {<SearchIcon color="gray.300" />}
             />
             <Input
               _focus={{ border: "1px solid black", boxShadow: "none" }}
