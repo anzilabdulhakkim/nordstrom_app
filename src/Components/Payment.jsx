@@ -122,10 +122,6 @@ export const Payment = () => {
           <hr />
           <Box className="textOffer">
             <Flex as="p">
-              Send me electronic or mail offers from Borderfree. You may opt out
-              at any time.
-            </Flex>
-            <Flex as="p">
               Send me electronic or mail offers from Nordstrom. You may opt out
               at any time.
             </Flex>

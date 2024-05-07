@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Center, Box } from "@chakra-ui/react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
 import Loader from "../Loader";
+import { SignUpContext } from "../../Context/SignupContext";
 
 const initialState = {
   email: "",
@@ -15,6 +16,7 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const Navigate = useNavigate();
+  const { handleLogin } = useContext(SignUpContext);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -46,6 +48,7 @@ const Login = () => {
       .then((data) => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("loggedIn", true);
+        handleLogin();
         Navigate("/ProductPage");
       })
       .catch((error) => {

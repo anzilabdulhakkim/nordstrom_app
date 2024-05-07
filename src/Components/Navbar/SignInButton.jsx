@@ -1,30 +1,9 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Text, useDisclosure, VStack,} from "@chakra-ui/react";
 import { useRef } from "react";
 import styles from "./navbarSignUp.module.css";
-import {
-  ChevronDownIcon,
-  HamburgerIcon,
-} from "@chakra-ui/icons";
-import {
-  AiOutlineShoppingCart,
-  AiOutlineHeart,
-  AiOutlineMail,
-} from "react-icons/ai";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-} from "@chakra-ui/react";
+import { ChevronDownIcon, HamburgerIcon,} from "@chakra-ui/icons";
+import { AiOutlineShoppingCart, AiOutlineHeart, AiOutlineMail,} from "react-icons/ai";
+import { Drawer, DrawerBody, DrawerOverlay, DrawerContent, DrawerCloseButton,} from "@chakra-ui/react";
 import { BsFillCartCheckFill, BsPersonFill } from "react-icons/bs";
 import { GiWantedReward, GiSplitCross } from "react-icons/gi";
 import { FaShuttleVan } from "react-icons/fa";
@@ -302,8 +281,10 @@ function SignInButton() {
                 Your Account
               </Text>
               <VStack align={"start"}>
-                <Flex align={"center"} gap="10px">
-                  <BsFillCartCheckFill />
+                <Flex align={"center"} gap="5px">
+                      <Link to={"/cartpage"}>
+                         <BsFillCartCheckFill fontSize={"20px"} />
+                      </Link>
                   <Text
                     color="#393939"
                     borderBottom="2px solid transparent"
@@ -315,7 +296,7 @@ function SignInButton() {
                       touchAction: "manipulation",
                     }}
                   >
-                    Purchase
+                    Cart
                   </Text>
                 </Flex>
                 <Flex align={"center"} gap="10px">
