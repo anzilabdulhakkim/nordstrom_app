@@ -190,8 +190,8 @@ export const Payment = () => {
             overflow={"scroll"}
             className="ProductDetaislSection"
           >
-            {getData.map((elem) => (
-              <Box>
+            {getData.map((elem,index) => (
+              <Box key={index}>
                 <Image key={elem} width={20} src={elem.searchImage} />
                 <Box className="detailsProductRating">
                   {new Array(5).fill("").map((_, i) => (

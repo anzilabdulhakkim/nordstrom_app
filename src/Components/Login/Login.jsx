@@ -1,9 +1,11 @@
 import { useContext, useState } from "react";
-import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Center, Box } from "@chakra-ui/react";
+import { Button, Input, InputGroup, InputRightElement, FormControl, FormLabel, IconButton, Center, Box } from "@chakra-ui/react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
 import Loader from "../Loader";
 import { SignUpContext } from "../../Context/SignupContext";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const initialState = {
   email: "",
@@ -12,8 +14,6 @@ const initialState = {
 
 const Login = () => {
   const [form, setForm] = useState(initialState);
-  const [isOpen, setIsOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const Navigate = useNavigate();
   const { handleLogin } = useContext(SignUpContext);
@@ -49,14 +49,19 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("loggedIn", true);
         handleLogin();
-        Navigate("/ProductPage");
+        toast.success("Login successful!");
+        setTimeout(() => {
+          Navigate("/ProductPage");
+        }, 3000);
       })
       .catch((error) => {
+        console.log(error);
         setIsLoading(false);
-        setErrorMessage(error.message);
-        setIsOpen(true);
+        toast.error("Login failed. Please try again.");
       });
   };
+  
+  
 
   return (
     <Center minH="60vh" mb="50px">
@@ -96,26 +101,6 @@ const Login = () => {
           </FormControl>
 
           <Button onClick={handleClickOpen} className="signInButton" variant="solid" size="md" backgroundColor="black" margin="0% 35%" color="white" mt="4" disabled={isLoading}>Sign in</Button> {/* Disable button while loading */}
-          
-          <AlertDialog isOpen={isOpen} leastDestructiveRef={undefined} onClose={() => setIsOpen(false)}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Alert
-                </AlertDialogHeader>
-
-                <AlertDialogBody>
-                  {errorMessage}
-                </AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button colorScheme="red" onClick={() => setIsOpen(false)}>
-                    Try again
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
 
           <br /> <br />
           <div className="staticTextTwo">
@@ -126,6 +111,7 @@ const Login = () => {
           </div>
         </div>
       </Box>
+      <ToastContainer />
     </Center>
   );
 };
