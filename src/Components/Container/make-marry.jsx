@@ -58,7 +58,7 @@ export default function MakeMarry() {
                   border={"1px solid black "}
                   borderRadius={"none"}
                 >
-                  Explore our gift guied
+                  Explore our gift guide
                 </Button>
                 <Button
                   fontWeight={"400"}

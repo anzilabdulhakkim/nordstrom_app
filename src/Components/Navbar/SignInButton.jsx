@@ -225,8 +225,8 @@ function SignInButton() {
             <Box display={{ base: "block", md: "none" }}>
               <BsPersonFill fontSize={"25px"} />
             </Box>
-            <Text display={{ base: "none", md: "block" }}>
-              {logedin ? "Hi" + " ," + userData.first_name : "Sign in"}
+            <Text display={{ base: "none", md: "block" }} mr="5px">
+              {logedin ? "Hi" + " ," + userData.first_name : <BsPersonFill fontSize={"30px"} />}
             </Text>
             <ChevronDownIcon
               display={{ base: "none", md: "block" }}

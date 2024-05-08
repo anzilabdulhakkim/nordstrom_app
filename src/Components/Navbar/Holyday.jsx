@@ -103,7 +103,7 @@ function Holyday() {
                 touchAction: "manipulation",
               }}
             >
-              Home Gifts Holiday Pajamas & Slippers
+              Home Gifts Holiday Pyjamas & Slippers
             </Text>
             <Text
               color="#393939"
@@ -115,7 +115,7 @@ function Holyday() {
                 touchAction: "manipulation",
               }}
             >
-              Holiday Pajamas & Slippers
+              Holiday Pyjamas & Slippers
             </Text>
           </VStack>
         </GridItem>

@@ -10,7 +10,6 @@ import FadeInSection from "../Fadein/Fadein";
 import GiftByRece from "./GiftByRece";
 import TrandinNow from "./TrandinNow";
 import MiddelImage from "./MiddelImage";
-import ScrollingCurrent from "./ScrollingCurrent";
 
 const imageData = [
   "https://n.nordstrommedia.com/it/554b0eb3-a151-411a-a1fd-59b2b35dc5b5.jpeg?h=700&w=1608",
@@ -45,9 +44,6 @@ function FirstImageDiv() {
       </FadeInSection>
       <FadeInSection>
         <MiddelImage />
-      </FadeInSection>
-      <FadeInSection>
-      <ScrollingCurrent />
       </FadeInSection>
     </VStack>
   );
